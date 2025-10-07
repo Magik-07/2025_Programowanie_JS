@@ -4,4 +4,5 @@ console.log(1 + NaN);
 console.log(undefined + undefined);
 console.log('foo' / 3);
 /// - To jest dopisek
+///// - dopisek 2
 
