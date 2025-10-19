@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Operatory bitowe — przykład</title>
+  <!-- Bootstrap CSS (CDN) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    pre.binary { background:#0f1720; color:#d1fae5; padding:10px; border-radius:6px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
+  </style>
+</head>
+<body class="bg-light">
+<div class="container py-5">
+  <h1 class="mb-3">Operatory bitowe w JavaScript — interaktywny przykład</h1>
+  <p class="lead">Wprowadź dwie liczby całkowite (signed). Zobaczysz ich reprezentacje binarne i wyniki podstawowych operacji bitowych.</p>
+
+  <div class="row g-3 align-items-end">
+    <div class="col-sm-3">
+      <label for="numA" class="form-label">Liczba A</label>
+      <input type="number" id="numA" class="form-control" value="6">
+      <div class="form-text">liczba całkowita (może być ujemna)</div>
+    </div>
+
+    <div class="col-sm-3">
+      <label for="numB" class="form-label">Liczba B</label>
+      <input type="number" id="numB" class="form-control" value="3">
+      <div class="form-text">liczba całkowita (może być ujemna)</div>
+    </div>
+
+    <div class="col-auto">
+      <button id="runBtn" class="btn btn-primary">Pokaż operacje</button>
+    </div>
+
+    <div class="col-12">
+      <div id="explanation" class="alert alert-info">
+        <strong>Uwaga:</strong> JavaScript pracuje na 32-bitowych reprezentacjach całkowitych przy wykonywaniu operacji bitowych. Operator `~` (NOT) oraz przesunięcia zachowują się w kontekście 32-bitowych integerów.
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div id="results" class="mt-4">
+    <!-- Wyniki pojawią się tutaj -->
+  </div>
+
+  <h3 class="mt-5">Krótka ściągawka operatorów bitowych</h3>
+  <ul>
+    <li><code>&amp;</code> — AND bitowy (bit=1 tylko gdy oba bity = 1)</li>
+    <li><code>|</code> — OR bitowy (bit=1 gdy przynajmniej jeden bit = 1)</li>
+    <li><code>^</code> — XOR bitowy (bit=1 gdy bity są różne)</li>
+    <li><code>~</code> — NOT bitowy (odwraca wszystkie bity)</li>
+    <li><code>&lt;&lt;</code> — przesunięcie w lewo (mnożenie przez 2^n dla liczb nieujemnych)</li>
+    <li><code>&gt;&gt;</code> — przesunięcie w prawo ze znakiem (zachowuje znak liczby)</li>
+    <li><code>&gt;&gt;&gt;</code> — przesunięcie w prawo bez znaku (wstawia zera z lewej)</li>
+  </ul>
+</div>
+
+<script>
+  // Pomocnicza funkcja: formatuj liczbę jako 32-bitową reprezentację binarną
+  function to32BitBinary(n) {
+    // Operacja >>> 0 konwertuje na Uint32 (bez znaku)
+    const uint32 = n >>> 0;
+    return uint32.toString(2).padStart(32, '0');
+  }
+
+  // Format 32-bit w grupach po 8 dla czytelności
+  function formatBinaryGroups(bin32) {
+    return bin32.match(/.{1,8}/g).join(' ');
+  }
+
+  // Funkcja budująca wiersz tabeli z opisem i wartością
+  function rowHtml(label, value, small='') {
+    return `<tr>
+                <td class="fw-bold">${label}</td>
+                <td class="mono">${value}${small ? '<div class="text-muted small mt-1">'+small+'</div>' : ''}</td>
+              </tr>`;
+  }
+
+  document.getElementById('runBtn').addEventListener('click', () => {
+    const a = parseInt(document.getElementById('numA').value, 10) || 0;
+    const b = parseInt(document.getElementById('numB').value, 10) || 0;
+
+    // Obliczenia podstawowe:
+    const andAB = a & b;      // AND bitowy
+    const orAB  = a | b;      // OR bitowy
+    const xorAB = a ^ b;      // XOR bitowy
+    const notA  = ~a;         // NOT bitowy (odwrócenie bitów a)
+    const shlA2 = a << 2;     // przesunięcie A o 2 bity w lewo
+    const shrA2 = a >> 2;     // przesunięcie A o 2 bity w prawo (z zachowaniem znaku)
+    const ushrA2 = a >>> 2;   // przesunięcie A o 2 bity w prawo (bez znaku)
+
+    // Przygotuj HTML wyników:
+    let html = `<div class="card"><div class="card-body">
+        <h5 class="card-title">Wyniki operacji</h5>
+        <p class="card-text">Poniżej widać wartości dziesiętne oraz 32-bitową reprezentację binarną (grupowaną co 8 bitów).</p>
+        <div class="table-responsive">
+        <table class="table table-sm table-bordered">
+          <tbody>`;
+
+    // Wiersze: wartości wejściowe
+    html += rowHtml('A (dziesiętnie)', a, `A (binarnie): <span class="mono">${formatBinaryGroups(to32BitBinary(a))}</span>`);
+    html += rowHtml('B (dziesiętnie)', b, `B (binarnie): <span class="mono">${formatBinaryGroups(to32BitBinary(b))}</span>`);
+
+    // Wyniki operacji
+    html += rowHtml('A & B (AND)', andAB, `binarnie: <span class="mono">${formatBinaryGroups(to32BitBinary(andAB))}</span>`);
+    html += rowHtml('A | B (OR)', orAB, `binarnie: <span class="mono">${formatBinaryGroups(to32BitBinary(orAB))}</span>`);
+    html += rowHtml('A ^ B (XOR)', xorAB, `binarnie: <span class="mono">${formatBinaryGroups(to32BitBinary(xorAB))}</span>`);
+
+    // NOT pokazujemy dla A (można też dla B)
+    html += rowHtml('~A (NOT A)', notA, `binarnie: <span class="mono">${formatBinaryGroups(to32BitBinary(notA))}</span>
+        <div class="small text-muted mt-1">Uwaga: ~A = -A - 1 (dla reprezentacji dwóch dopełnień)</div>`);
+
+    // Przesunięcia
+    html += rowHtml('A << 2 (A przesunięte w lewo o 2)', shlA2, `dziesiętnie: ${shlA2}; binarnie: <span class="mono">${formatBinaryGroups(to32BitBinary(shlA2))}</span>
+        <div class="small text-muted mt-1">Przesunięcie w lewo odpowiada mnożeniu przez 2^2 (dla niektórych liczb)</div>`);
+
+    html += rowHtml('A >> 2 (A przesunięte w prawo o 2, zachowując znak)', shrA2, `dziesiętnie: ${shrA2}; binarnie: <span class="mono">${formatBinaryGroups(to32BitBinary(shrA2))}</span>
+        <div class="small text-muted mt-1">Dla liczb ujemnych zachowuje 1 wiodące (sign extension)</div>`);
+
+    html += rowHtml('A >>> 2 (A przesunięte w prawo o 2, bez znaku)', ushrA2, `dziesiętnie: ${ushrA2}; binarnie: <span class="mono">${formatBinaryGroups(to32BitBinary(ushrA2))}</span>
+        <div class="small text-muted mt-1">Wstawia zera z lewej — wynik zawsze nieujemny (Uint32)</div>`);
+
+    html += `</tbody></table></div></div></div>`;
+
+    // Dodatkowy przykład praktyczny: sprawdź czy bit o określonej pozycji jest ustawiony
+    html += `<div class="card mt-3"><div class="card-body">
+        <h6>Sprawdź bit</h6>
+        <p>Przykład: czy w A jest ustawiony bit na pozycji 1 (licząc od 0)?</p>`;
+
+    const maskPos1 = 1 << 1; // maska z 1 na pozycji 1
+    const isBit1Set = (a & maskPos1) !== 0;
+    html += `<p class="mono">Maska (pozycja 1): ${formatBinaryGroups(to32BitBinary(maskPos1))} — ${maskPos1}</p>`;
+    html += `<p>W A bit na pozycji 1 jest: <strong>${isBit1Set ? 'USTAWIONY (1)' : 'NIEUSTAWIONY (0)'}</strong></p>`;
+    html += `</div></div>`;
+
+    document.getElementById('results').innerHTML = html;
+  });
+
+  // Opcjonalnie: uruchom przy wczytaniu z domyślnymi wartościami
+  document.getElementById('runBtn').click();
+
+  /* ------------------------------------------------------------
+     KOMENTARZE WYJAŚNIAJĄCE (do omówienia na lekcji):
+     - AND (&): porównuje bity A i B; wynikowy bit = 1 tylko gdy oba bity = 1.
+     - OR (|): wynikowy bit = 1 gdy przynajmniej jeden z bitów = 1.
+     - XOR (^): wynikowy bit = 1 gdy bity są różne; przydatne np. do zamiany bitów.
+     - NOT (~): odwraca wszystkie bity; w systemie dwóch dopełnień ~n = -n - 1.
+     - << (shift left): przesuwa bity w lewo — w prostych przypadkach to mnożenie przez 2^k.
+     - >> (arithmetic shift right): przesuwa bity w prawo zachowując bit znaku (dla ujemnych liczb zachowa 1).
+     - >>> (logical shift right): przesuwa w prawo, zawsze wstawia zera z lewej (wynik bez znaku).
+     - JS konwertuje wartości na 32-bitowe przed operacją bitową (liczby są wewnętrznie float64).
+     ------------------------------------------------------------ */
+</script>
+
+<!-- Bootstrap JS (CDN) optional -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
