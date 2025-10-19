@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Specjalne wartości w JavaScript: NaN, null, undefined, Infinity</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .mono { font-family: ui-monospace, monospace; }
+  </style>
+</head>
+<body class="bg-light">
+<div class="container py-5">
+  <h1 class="mb-4">Specjalne wartości w JavaScript</h1>
+  <p class="lead">Zobacz, jak zachowują się <code>NaN</code>, <code>null</code>, <code>undefined</code> i <code>Infinity</code> w operacjach matematycznych.</p>
+
+  <div class="mb-3">
+    <button class="btn btn-secondary me-2" onclick="pokazPrzyklady()">Pokaż przykłady</button>
+    <button class="btn btn-primary" onclick="wyczysc()">Wyczyść</button>
+  </div>
+
+  <div id="wynik"></div>
+</div>
+
+<script>
+  function pokazPrzyklady() {
+    const resultDiv = document.getElementById("wynik");
+    resultDiv.innerHTML = "";
+
+    // Przykłady specjalnych wartości
+    const values = [
+      { label: "NaN", value: NaN },
+      { label: "null", value: null },
+      { label: "undefined", value: undefined },
+      { label: "Infinity", value: Infinity },
+      { label: "-Infinity", value: -Infinity }
+    ];
+
+    let html = `<div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Przykłady i ich zachowanie</h5>
+        <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+        <thead class="table-light">
+          <tr><th>Wartość</th><th>Typ</th><th>Opis</th><th>Przykład operacji</th><th>Wynik</th></tr>
+        </thead>
+        <tbody>`;
+
+    values.forEach(item => {
+      let opis = "";
+      let expr = "";
+      let wynik = "";
+
+      switch(item.label) {
+        case "NaN":
+          opis = "Nie jest liczbą (ang. Not a Number), np. wynik błędnej operacji matematycznej.";
+          expr = `"tekst" * 2`;
+          wynik = "NaN";
+          break;
+        case "null":
+          opis = "Wartość pusta (brak danych), ale istniejąca.";
+          expr = "null + 5";
+          wynik = null + 5;
+          break;
+        case "undefined":
+          opis = "Wartość niezdefiniowana (np. zmienna bez przypisania).";
+          expr = "undefined + 2";
+          wynik = undefined + 2;
+          break;
+        case "Infinity":
+          opis = "Nieskończoność dodatnia (np. 1/0).";
+          expr = "1 / 0";
+          wynik = 1 / 0;
+          break;
+        case "-Infinity":
+          opis = "Nieskończoność ujemna (np. -1/0).";
+          expr = "-1 / 0";
+          wynik = -1 / 0;
+          break;
+      }
+
+      html += `
+        <tr>
+          <td><code>${item.label}</code></td>
+          <td>${typeof item.value}</td>
+          <td>${opis}</td>
+          <td><code>${expr}</code></td>
+          <td class="mono">${wynik}</td>
+        </tr>`;
+    });
+
+    html += `</tbody></table></div></div></div>`;
+    resultDiv.innerHTML = html;
+  }
+
+  function wyczysc() {
+    document.getElementById("wynik").innerHTML = "";
+  }
+
+  // Pokaz automatycznie przy pierwszym uruchomieniu
+  pokazPrzyklady();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
