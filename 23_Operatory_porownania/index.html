@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Operatory porównania — demonstracja (poprawione)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Roboto Mono,monospace;}</style>
+</head>
+<body class="bg-light">
+<div class="container py-5">
+  <h1 class="mb-3">Operatory porównania — pokaz różnicy między <code>==</code> i <code>===</code></h1>
+  <p class="lead">Wpisz wartość A i B. Aby wymusić typ string, wpisz wartość w cudzysłowie, np. <code>"5"</code> lub <code>'5'</code>.</p>
+
+  <div class="row g-3 align-items-end mb-3">
+    <div class="col-sm-4">
+      <label class="form-label">Wartość A</label>
+      <input id="valA" class="form-control" type="text" value="5">
+    </div>
+    <div class="col-sm-4">
+      <label class="form-label">Wartość B</label>
+      <input id="valB" class="form-control" type="text" value='"5"'>
+    </div>
+    <div class="col-auto">
+      <button id="compareBtn" class="btn btn-primary">Porównaj</button>
+    </div>
+  </div>
+
+  <div id="results"></div>
+
+  <div class="mt-4">
+    <p><strong>Wskazówka dla uczniów:</strong> wpisz 5 i "5" (z cudzysłowem) — zobaczysz <code>==</code> → <em>true</em>, <code>===</code> → <em>false</em>.</p>
+  </div>
+</div>
+
+<script>
+  // Funkcja analizująca wpis ucznia: rozpoznaje cudzysłowy i liczby
+  function parseInput(raw) {
+    if (raw === null) return raw;
+    const s = raw.trim();
+
+    // Jeśli zaczyna się i kończy tym samym cudzysłowem (" lub '), traktuj jako string bez cudzysłowów
+    if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+      return s.slice(1, -1); // zwróć bez zewnętrznych cudzysłowów
+    }
+
+    // Jeśli po trimie można bez problemu skonwertować na liczbę (np. "5" → 5, "3.14" → 3.14)
+    // sprawdzamy, czy nie jest pusty i czy Number daje wartość nie-NaN
+    if (s !== '' && !Number.isNaN(Number(s))) {
+      return Number(s);
+    }
+
+    // W pozostałych przypadkach zwracamy oryginalny string (bez modyfikacji)
+    return s;
+  }
+
+  document.getElementById('compareBtn').addEventListener('click', () => {
+    const rawA = document.getElementById('valA').value;
+    const rawB = document.getElementById('valB').value;
+
+    const a = parseInput(rawA);
+    const b = parseInput(rawB);
+
+    // Tablica porównań do wygenerowania tabeli
+    const checks = [
+      { op: 'A == B', desc: 'porównanie wartości (konwersja typów)', res: a == b },
+      { op: 'A === B', desc: 'porównanie wartości i typu', res: a === b },
+      { op: 'A != B', desc: 'różne wartości (po konwersji)', res: a != b },
+      { op: 'A !== B', desc: 'różne wartości lub typy', res: a !== b },
+      { op: 'A > B', desc: 'A większe niż B', res: a > b },
+      { op: 'A < B', desc: 'A mniejsze niż B', res: a < b },
+      { op: 'A >= B', desc: 'A większe lub równe B', res: a >= b },
+      { op: 'A <= B', desc: 'A mniejsze lub równe B', res: a <= b }
+    ];
+
+    // Konstrukcja wyniku
+    let html = `<div class="card"><div class="card-body">
+        <h5 class="card-title">Porównanie: <span class="mono">${rawA}</span> i <span class="mono">${rawB}</span></h5>
+        <p><strong>Typ A:</strong> ${typeof a} &nbsp; | &nbsp; <strong>Typ B:</strong> ${typeof b}</p>
+        <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-light"><tr><th>Operator</th><th>Znaczenie</th><th>Wynik</th></tr></thead><tbody>`;
+
+    checks.forEach(item => {
+      html += `<tr>
+          <td class="mono">${item.op}</td>
+          <td>${item.desc}</td>
+          <td class="${item.res ? 'text-success' : 'text-danger'} fw-bold">${item.res}</td>
+        </tr>`;
+    });
+
+    html += `</tbody></table></div></div></div>`;
+
+    document.getElementById('results').innerHTML = html;
+  });
+
+  // Autostart dla wygody
+  document.getElementById('compareBtn').click();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

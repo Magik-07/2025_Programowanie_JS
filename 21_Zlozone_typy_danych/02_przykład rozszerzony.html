@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Specjalne wartości w JavaScript — wersja interaktywna</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .mono { font-family: ui-monospace, monospace; }
+  </style>
+</head>
+<body class="bg-light">
+<div class="container py-5">
+  <h1 class="mb-4">Specjalne wartości w JavaScript</h1>
+  <p class="lead">
+    Zobacz, jak zachowują się <code>NaN</code>, <code>null</code>, <code>undefined</code> i <code>Infinity</code>.<br>
+    Możesz też wpisać własne wyrażenie i zobaczyć, co się stanie!
+  </p>
+
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Wpisz własne wyrażenie JavaScript</h5>
+      <div class="input-group mb-3">
+        <span class="input-group-text">Wyrażenie</span>
+        <input type="text" id="userExpr" class="form-control" placeholder='np. "tekst" * 3 lub 1 / 0'>
+        <button class="btn btn-primary" onclick="oblicz()">Oblicz</button>
+      </div>
+      <div id="userResult" class="mt-3"></div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <button class="btn btn-secondary me-2" onclick="pokazPrzyklady()">Pokaż przykłady</button>
+    <button class="btn btn-outline-danger" onclick="wyczysc()">Wyczyść</button>
+  </div>
+
+  <div id="wynik"></div>
+</div>
+
+<script>
+  // --- Główna funkcja pokazująca wbudowane przykłady ---
+  function pokazPrzyklady() {
+    const resultDiv = document.getElementById("wynik");
+    resultDiv.innerHTML = "";
+
+    const values = [
+      { label: "NaN", value: NaN },
+      { label: "null", value: null },
+      { label: "undefined", value: undefined },
+      { label: "Infinity", value: Infinity },
+      { label: "-Infinity", value: -Infinity }
+    ];
+
+    let html = `
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Przykłady specjalnych wartości</h5>
+          <div class="table-responsive">
+          <table class="table table-bordered align-middle">
+            <thead class="table-light">
+              <tr><th>Wartość</th><th>Typ</th><th>Opis</th><th>Przykład operacji</th><th>Wynik</th></tr>
+            </thead>
+            <tbody>`;
+
+    values.forEach(item => {
+      let opis = "", expr = "", wynik = "";
+
+      switch(item.label) {
+        case "NaN":
+          opis = "Nie jest liczbą (Not a Number) — np. wynik błędnej operacji matematycznej.";
+          expr = `"tekst" * 2`;
+          wynik = "NaN";
+          break;
+        case "null":
+          opis = "Wartość pusta (brak danych, ale istniejąca).";
+          expr = "null + 5";
+          wynik = null + 5;
+          break;
+        case "undefined":
+          opis = "Wartość niezdefiniowana (np. zmienna bez przypisania).";
+          expr = "undefined + 2";
+          wynik = undefined + 2;
+          break;
+        case "Infinity":
+          opis = "Nieskończoność dodatnia (np. 1/0).";
+          expr = "1 / 0";
+          wynik = 1 / 0;
+          break;
+        case "-Infinity":
+          opis = "Nieskończoność ujemna (np. -1/0).";
+          expr = "-1 / 0";
+          wynik = -1 / 0;
+          break;
+      }
+
+      html += `
+        <tr>
+          <td><code>${item.label}</code></td>
+          <td>${typeof item.value}</td>
+          <td>${opis}</td>
+          <td><code>${expr}</code></td>
+          <td class="mono">${wynik}</td>
+        </tr>`;
+    });
+
+    html += `</tbody></table></div></div></div>`;
+    resultDiv.innerHTML = html;
+  }
+
+  // --- Funkcja do czyszczenia wyników ---
+  function wyczysc() {
+    document.getElementById("wynik").innerHTML = "";
+    document.getElementById("userResult").innerHTML = "";
+  }
+
+  // --- Funkcja obliczająca wyrażenie wpisane przez ucznia ---
+  function oblicz() {
+    const expr = document.getElementById("userExpr").value.trim();
+    const div = document.getElementById("userResult");
+
+    if (!expr) {
+      div.innerHTML = `<div class="alert alert-warning">Najpierw wpisz wyrażenie!</div>`;
+      return;
+    }
+
+    try {
+      const wynik = eval(expr); // Uwaga: eval tylko w edukacyjnych przykładach
+      const typ = typeof wynik;
+
+      div.innerHTML = `
+        <div class="alert alert-info">
+          <strong>Wyrażenie:</strong> <code>${expr}</code><br>
+          <strong>Wynik:</strong> <span class="mono">${wynik}</span><br>
+          <strong>Typ:</strong> ${typ}
+        </div>`;
+    } catch (e) {
+      div.innerHTML = `<div class="alert alert-danger">
+        <strong>Błąd!</strong> ${e.message}
+      </div>`;
+    }
+  }
+
+  // Automatyczne pokazanie przykładowej tabeli
+  pokazPrzyklady();
+
+  /*
+    KOMENTARZE DYDAKTYCZNE:
+    - NaN (Not a Number): pojawia się, gdy operacja matematyczna nie ma sensu, np. "tekst" * 3
+    - null: oznacza wartość pustą, ale "istniejącą"
+    - undefined: oznacza brak wartości, np. niezainicjowana zmienna
+    - Infinity: wynik dzielenia przez zero lub przepełnienia
+    - typeof: operator zwracający typ danych (np. "number", "object", "undefined")
+  */
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

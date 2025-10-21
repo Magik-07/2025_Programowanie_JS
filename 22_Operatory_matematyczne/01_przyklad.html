@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Operatory matematyczne w JavaScript</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .mono { font-family: monospace; }
+    pre { background: #1e293b; color: #e2e8f0; padding: 10px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+<div class="container py-5">
+  <h1 class="mb-4">Operatory matematyczne w JavaScript</h1>
+  <p class="lead">Ten przykład pokazuje działanie operatorów arytmetycznych na dwóch liczbach podanych przez użytkownika.</p>
+
+  <div class="row g-3 align-items-end">
+    <div class="col-sm-3">
+      <label for="numA" class="form-label">Liczba A</label>
+      <input type="number" id="numA" class="form-control" value="8">
+    </div>
+
+    <div class="col-sm-3">
+      <label for="numB" class="form-label">Liczba B</label>
+      <input type="number" id="numB" class="form-control" value="3">
+    </div>
+
+    <div class="col-auto">
+      <button id="runBtn" class="btn btn-primary">Oblicz</button>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <div id="results" class="mt-4"></div>
+
+  <h3 class="mt-5">Podstawowe operatory matematyczne</h3>
+  <ul>
+    <li><code>+</code> — dodawanie</li>
+    <li><code>-</code> — odejmowanie</li>
+    <li><code>*</code> — mnożenie</li>
+    <li><code>/</code> — dzielenie</li>
+    <li><code>%</code> — reszta z dzielenia (modulo)</li>
+    <li><code>**</code> — potęgowanie</li>
+    <li><code>++</code> — inkrementacja (zwiększa o 1)</li>
+    <li><code>--</code> — dekrementacja (zmniejsza o 1)</li>
+  </ul>
+</div>
+
+<script>
+  document.getElementById('runBtn').addEventListener('click', () => {
+    const a = parseFloat(document.getElementById('numA').value) || 0;
+    const b = parseFloat(document.getElementById('numB').value) || 0;
+
+    // Obliczenia:
+    const addition = a + b;        // dodawanie
+    const subtraction = a - b;     // odejmowanie
+    const multiplication = a * b;  // mnożenie
+    const division = a / b;        // dzielenie
+    const modulo = a % b;          // reszta z dzielenia
+    const power = a ** b;          // potęgowanie
+    const incA = a + 1;            // przykład inkrementacji
+    const decB = b - 1;            // przykład dekrementacji
+
+    // Tworzymy tabelę wyników:
+    let html = `
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Wyniki operacji</h5>
+      <table class="table table-bordered table-sm">
+        <thead class="table-light">
+          <tr><th>Operacja</th><th>Wynik</th><th>Opis</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">A + B</td><td>${addition}</td><td>Dodawanie (sumowanie wartości)</td></tr>
+          <tr><td class="mono">A - B</td><td>${subtraction}</td><td>Odejmowanie (różnica A i B)</td></tr>
+          <tr><td class="mono">A * B</td><td>${multiplication}</td><td>Mnożenie (iloczyn A i B)</td></tr>
+          <tr><td class="mono">A / B</td><td>${division.toFixed(2)}</td><td>Dzielenie (iloraz A i B)</td></tr>
+          <tr><td class="mono">A % B</td><td>${modulo}</td><td>Reszta z dzielenia (modulo)</td></tr>
+          <tr><td class="mono">A ** B</td><td>${power}</td><td>Potęgowanie (A do potęgi B)</td></tr>
+          <tr><td class="mono">A++</td><td>${incA}</td><td>Inkrementacja (zwiększenie o 1)</td></tr>
+          <tr><td class="mono">B--</td><td>${decB}</td><td>Dekrementacja (zmniejszenie o 1)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+
+    document.getElementById('results').innerHTML = html;
+  });
+
+  /*
+    --------------------------------------------
+    KOMENTARZE DO OMÓWIENIA NA LEKCJI:
+    - Operatory arytmetyczne działają podobnie jak w matematyce.
+    - Uważaj przy dzieleniu przez 0 — wynik to Infinity (nieskończoność).
+    - Operator % przydaje się np. do sprawdzania parzystości (x % 2 == 0).
+    - Operator ** (potęgowanie) to nowy zapis zamiast Math.pow(a, b).
+    - ++ i -- można stosować w dwóch wersjach:
+        a++ (postinkrementacja) — zwraca starą wartość, potem zwiększa.
+        ++a (preinkrementacja) — najpierw zwiększa, potem zwraca.
+    --------------------------------------------
+  */
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
